@@ -1,0 +1,28 @@
+# Web framework
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+
+# Config
+pydantic-settings==2.5.2
+
+# HTTP client (for Ollama)
+httpx==0.27.2
+
+# Document parsing (Week 1 Part 2)
+pypdf==4.3.1
+python-docx==1.1.2
+python-multipart==0.0.9
+
+# Embeddings (Week 1 Part 2)
+sentence-transformers==3.1.1
+
+# Vector store (Week 1 Part 2)
+chromadb==0.5.15
+
+# Monitoring (Week 3)
+prometheus-fastapi-instrumentator==7.0.0
+
+# Testing
+pytest==8.3.3
+pytest-asyncio==0.24.0
+httpx==0.27.2

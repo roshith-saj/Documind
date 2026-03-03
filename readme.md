@@ -7,10 +7,10 @@ A production-grade RAG (Retrieval-Augmented Generation) API that lets you upload
 ## Architecture
 
 ```
-┌─────────────┐    ┌──────────────┐    ┌─────────────────┐
+┌─────────────┐    ┌──────────────┐     ┌─────────────────┐
 │   Client    │───▶│  FastAPI App │───▶│  Mistral 7B     │
-│             │    │  (Docker)    │    │  via Ollama     │
-└─────────────┘    └──────┬───────┘    └─────────────────┘
+│             │    │  (Docker)    │     │  via Ollama     │
+└─────────────┘    └──────┬───────┘     └─────────────────┘
                           │
                ┌──────────┼──────────┐
                ▼          ▼          ▼

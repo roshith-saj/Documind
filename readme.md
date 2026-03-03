@@ -8,16 +8,16 @@ A production-grade RAG (Retrieval-Augmented Generation) API that lets you upload
 
 ```
 ┌─────────────┐    ┌──────────────┐    ┌─────────────────┐
-│   Client    │───▶│  FastAPI App │───▶│  Mistral 7B    │
+│   Client    │───▶│  FastAPI App │───▶│  Mistral 7B     │
 │             │    │  (Docker)    │    │  via Ollama     │
 └─────────────┘    └──────┬───────┘    └─────────────────┘
                           │
                ┌──────────┼──────────┐
                ▼          ▼          ▼
-        ┌──────────┐ ┌──────────┐ ┌──────────┐
-        │ChromaDB  │ │Postgres  │ │Prometheus│
-        │(vectors) │ │(metadata)│ │+ Grafana │
-        └──────────┘ └──────────┘ └──────────┘
+        ┌──────────┐ ┌─────────┐ ┌──────────┐
+        │ChromaDB  │ │Postgres │ │Prometheus│
+        │(vectors) │ │(metadata│ │+ Grafana │
+        └──────────┘ └─────────┘ └──────────┘
 ```
 
 ### Tech Stack
@@ -194,7 +194,7 @@ Return answer + sources ← includes which chunks were used and similarity score
 
 ## Development Progress
 
-- [x] **Week 1** — FastAPI skeleton, config, Ollama integration, document ingestion, ChromaDB, full RAG pipeline
+- [x] **Week 1** — FastAPI skeleton, config, Ollama + Mistral 7B, document ingestion (PDF/TXT/DOCX), sentence-transformers embeddings, ChromaDB vector store, full RAG pipeline with sources
 - [ ] **Week 2** — Dockerize full stack, add Docker Compose for all services
 - [ ] **Week 3** — Deploy to AWS ECS with Fargate, CI/CD via GitHub Actions
 - [ ] **Week 4** — Prometheus metrics, Grafana dashboards, polish & demo

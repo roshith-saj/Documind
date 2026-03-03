@@ -1,4 +1,5 @@
 import chromadb
+import httpx
 from dataclasses import dataclass
 from app.core.config import get_settings
 from app.core.exceptions import VectorStoreError
@@ -37,20 +38,22 @@ class VectorStoreService:
         if self._collection is None:
             self._collection = self.client.get_or_create_collection(
                 name=settings.CHROMA_COLLECTION,
-                metadata={"hnsw:space": "cosine"},  # cosine similarity for text
+                metadata={"hnsw:space": "cosine"},
             )
             logger.info(f"Using ChromaDB collection: '{settings.CHROMA_COLLECTION}'")
         return self._collection
 
     def is_healthy(self) -> bool:
         try:
-            self.client.heartbeat()
-            return True
+            r = httpx.get(
+                f"http://{settings.CHROMA_HOST}:{settings.CHROMA_PORT}/api/v1/heartbeat",
+                timeout=3,
+            )
+            return r.status_code == 200
         except Exception:
             return False
 
     def add_chunks(self, chunks: list[DocumentChunk], embeddings: list[list[float]]):
-        """Store chunks and their embeddings in ChromaDB."""
         try:
             self.collection.add(
                 ids=[c.chunk_id for c in chunks],
@@ -67,14 +70,12 @@ class VectorStoreService:
             raise VectorStoreError(str(e))
 
     def query(self, embedding: list[float], top_k: int) -> list[RetrievedChunk]:
-        """Find the top_k most similar chunks to the query embedding."""
         try:
             results = self.collection.query(
                 query_embeddings=[embedding],
                 n_results=top_k,
                 include=["documents", "metadatas", "distances"],
             )
-
             chunks = []
             for text, meta, distance in zip(
                 results["documents"][0],
@@ -86,14 +87,13 @@ class VectorStoreService:
                     filename=meta["filename"],
                     chunk_index=meta["chunk_index"],
                     text=text,
-                    score=round(1 - distance, 4),  # convert distance → similarity score
+                    score=round(1 - distance, 4),
                 ))
             return chunks
         except Exception as e:
             raise VectorStoreError(str(e))
 
     def delete_by_doc_id(self, doc_id: str):
-        """Remove all chunks belonging to a document."""
         try:
             results = self.collection.get(where={"doc_id": doc_id})
             if results["ids"]:
@@ -103,7 +103,6 @@ class VectorStoreService:
             raise VectorStoreError(str(e))
 
     def list_documents(self) -> list[dict]:
-        """Return unique documents stored in the collection."""
         try:
             results = self.collection.get(include=["metadatas"])
             seen = {}

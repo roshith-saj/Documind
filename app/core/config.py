@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = False
     API_PREFIX: str = "/api/v1"
+    APP_PORT: int = 8080
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"

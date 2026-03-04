@@ -1,8 +1,20 @@
 version: "3.9"
 
+networks:
+  documind-net:
+    driver: bridge
+
+volumes:
+  chroma_data:
+  ollama_data:
+
 services:
+
+  # ── ChromaDB ────────────────────────────────────────────────────────────────
   chromadb:
     image: chromadb/chroma:0.5.15
+    networks:
+      - documind-net
     ports:
       - "8000:8000"
     volumes:
@@ -16,5 +28,61 @@ services:
       timeout: 5s
       retries: 5
 
-volumes:
-  chroma_data:
+  # ── Ollama ──────────────────────────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    networks:
+      - documind-net
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # ── Ollama Model Pull ────────────────────────────────────────────────────────
+  ollama-pull:
+    image: ollama/ollama:latest
+    networks:
+      - documind-net
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: ["ollama", "pull", "mistral"]
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: "no"
+
+  # ── FastAPI App ─────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    networks:
+      - documind-net
+    ports:
+      - "8080:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - APP_PORT=8080
+      - DEBUG=false
+    depends_on:
+      chromadb:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8080/api/v1/health').raise_for_status()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped

@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environment — never copy this into the image
+.venv/
+venv/
+env/
+
+# Environment files — secrets must never be baked into images
+.env
+.env.*
+!.env.example
+
+# Development & testing
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+
+# Docker files themselves
+docker/
+Dockerfile*
+
+# Editor & OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Git
+.git/
+.gitignore
+
+# Docs
+README.md
+*.md

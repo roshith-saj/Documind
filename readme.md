@@ -194,8 +194,8 @@ Return answer + sources ← includes which chunks were used and similarity score
 
 ## Development Progress
 
-- [x] **Week 1** — FastAPI skeleton, config, Ollama + Mistral 7B, document ingestion (PDF/TXT/DOCX), sentence-transformers embeddings, ChromaDB vector store, full RAG pipeline with sources
-- [ ] **Week 2** — Dockerize full stack, add Docker Compose for all services
+- [x] **Week 1** ✅ — FastAPI skeleton, config, Ollama + Mistral 7B, document ingestion (PDF/TXT/DOCX), sentence-transformers embeddings, ChromaDB vector store, full RAG pipeline with sources
+- [x] **Week 2** ✅ — Multi-stage Dockerfile, full Docker Compose stack (FastAPI + ChromaDB + Ollama), .dockerignore, all services on shared internal network
 - [ ] **Week 3** — Deploy to AWS ECS with Fargate, CI/CD via GitHub Actions
 - [ ] **Week 4** — Prometheus metrics, Grafana dashboards, polish & demo
 

@@ -2,9 +2,12 @@
   "family": "documind",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
-  "cpu": "1024",
-  "memory": "3072",
+  "cpu": "4096",
+  "memory": "16384",
   "executionRoleArn": "arn:aws:iam::818007713788:role/ecsTaskExecutionRole",
+  "ephemeralStorage": {
+    "sizeInGiB": 50
+  },
   "containerDefinitions": [
     {
       "name": "documind-api",
@@ -22,7 +25,7 @@
         {"name": "CHROMA_HOST", "value": "localhost"},
         {"name": "CHROMA_PORT", "value": "8000"},
         {"name": "OLLAMA_BASE_URL", "value": "http://localhost:11434"},
-        {"name": "OLLAMA_MODEL", "value": "mistral"}
+        {"name": "OLLAMA_MODEL", "value": "mistral"}, {"name": "OLLAMA_TIMEOUT", "value": "300"}
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -37,7 +40,7 @@
         "interval": 30,
         "timeout": 10,
         "retries": 3,
-        "startPeriod": 40
+        "startPeriod": 60
       }
     },
     {
@@ -73,6 +76,8 @@
           "protocol": "tcp"
         }
       ],
+      "entryPoint": ["/bin/sh", "-c"],
+      "command": ["ollama serve & sleep 10 && ollama pull mistral && wait"],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {

@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     OLLAMA_MODEL: str = "mistral"
-    OLLAMA_TIMEOUT: int = 120
+    OLLAMA_TIMEOUT: int = 300
 
     # ChromaDB
     CHROMA_HOST: str = "localhost"

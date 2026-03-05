@@ -1,0 +1,86 @@
+{
+  "family": "documind",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "3072",
+  "executionRoleArn": "arn:aws:iam::818007713788:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "documind-api",
+      "image": "818007713788.dkr.ecr.ap-south-1.amazonaws.com/documind:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {"name": "APP_PORT", "value": "8080"},
+        {"name": "DEBUG", "value": "false"},
+        {"name": "CHROMA_HOST", "value": "localhost"},
+        {"name": "CHROMA_PORT", "value": "8000"},
+        {"name": "OLLAMA_BASE_URL", "value": "http://localhost:11434"},
+        {"name": "OLLAMA_MODEL", "value": "mistral"}
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/documind",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "api"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "python -c \"import httpx; httpx.get('http://localhost:8080/api/v1/health').raise_for_status()\" || exit 1"],
+        "interval": 30,
+        "timeout": 10,
+        "retries": 3,
+        "startPeriod": 40
+      }
+    },
+    {
+      "name": "chromadb",
+      "image": "chromadb/chroma:0.5.15",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {"name": "IS_PERSISTENT", "value": "TRUE"},
+        {"name": "ANONYMIZED_TELEMETRY", "value": "FALSE"}
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/documind",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "chromadb"
+        }
+      }
+    },
+    {
+      "name": "ollama",
+      "image": "ollama/ollama:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 11434,
+          "protocol": "tcp"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/documind",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ollama"
+        }
+      }
+    }
+  ]
+}

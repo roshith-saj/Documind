@@ -1,6 +1,6 @@
 $filePath = "C:\Users\roshu\OneDrive\Desktop\test.txt"
 $fileName = "test.txt"
-$url = "http://13.204.43.62:8080/api/v1/documents/"
+$url = "http://43.204.29.38:8080/api/v1/documents/"
 $boundary = [System.Guid]::NewGuid().ToString()
 $fileBytes = [System.IO.File]::ReadAllBytes($filePath)
 $fileContent = [System.Text.Encoding]::UTF8.GetString($fileBytes)

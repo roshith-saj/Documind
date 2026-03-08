@@ -1,7 +1,9 @@
 {
   "family": "documind",
   "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "cpu": "4096",
   "memory": "16384",
   "executionRoleArn": "arn:aws:iam::818007713788:role/ecsTaskExecutionRole",
@@ -20,12 +22,34 @@
         }
       ],
       "environment": [
-        {"name": "APP_PORT", "value": "8080"},
-        {"name": "DEBUG", "value": "false"},
-        {"name": "CHROMA_HOST", "value": "localhost"},
-        {"name": "CHROMA_PORT", "value": "8000"},
-        {"name": "OLLAMA_BASE_URL", "value": "http://localhost:11434"},
-        {"name": "OLLAMA_MODEL", "value": "mistral"}, {"name": "OLLAMA_TIMEOUT", "value": "300"}
+        {
+          "name": "APP_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "DEBUG",
+          "value": "false"
+        },
+        {
+          "name": "CHROMA_HOST",
+          "value": "localhost"
+        },
+        {
+          "name": "CHROMA_PORT",
+          "value": "8000"
+        },
+        {
+          "name": "OLLAMA_BASE_URL",
+          "value": "http://localhost:11434"
+        },
+        {
+          "name": "OLLAMA_MODEL",
+          "value": "mistral"
+        },
+        {
+          "name": "OLLAMA_TIMEOUT",
+          "value": "300"
+        }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -36,7 +60,10 @@
         }
       },
       "healthCheck": {
-        "command": ["CMD-SHELL", "python -c \"import httpx; httpx.get('http://localhost:8080/api/v1/health').raise_for_status()\" || exit 1"],
+        "command": [
+          "CMD-SHELL",
+          "python -c \"import httpx; httpx.get('http://localhost:8080/api/v1/health').raise_for_status()\" || exit 1"
+        ],
         "interval": 30,
         "timeout": 10,
         "retries": 3,
@@ -54,8 +81,14 @@
         }
       ],
       "environment": [
-        {"name": "IS_PERSISTENT", "value": "TRUE"},
-        {"name": "ANONYMIZED_TELEMETRY", "value": "FALSE"}
+        {
+          "name": "IS_PERSISTENT",
+          "value": "TRUE"
+        },
+        {
+          "name": "ANONYMIZED_TELEMETRY",
+          "value": "FALSE"
+        }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -76,8 +109,13 @@
           "protocol": "tcp"
         }
       ],
-      "entryPoint": ["/bin/sh", "-c"],
-      "command": ["ollama serve & sleep 10 && ollama pull mistral && wait"],
+      "entryPoint": [
+        "/bin/sh",
+        "-c"
+      ],
+      "command": [
+        "ollama serve & until ollama list > /dev/null 2>&1; do sleep 2; done && ollama pull mistral && wait"
+      ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {

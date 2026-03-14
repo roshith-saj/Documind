@@ -5,7 +5,9 @@ from app.core.logging import logger
 from app.services.ingestion import ingestion_service
 from app.services.embedder import embedder_service
 from app.services.vector_store import vector_store_service
+from app.monitoring.metrics import DOCS_INGESTED, CHUNKS_STORED
 from datetime import datetime, timezone
+from pathlib import Path
 
 router = APIRouter()
 
@@ -18,7 +20,6 @@ async def upload_document(file: UploadFile = File(...)):
     Upload and index a document. Supported types: PDF, TXT, DOCX.
     The document will be chunked, embedded, and stored in ChromaDB.
     """
-    from pathlib import Path
     ext = Path(file.filename).suffix.lower()
     if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(status_code=415, detail=f"Unsupported file type '{ext}'. Allowed: {ALLOWED_EXTENSIONS}")
@@ -35,6 +36,10 @@ async def upload_document(file: UploadFile = File(...)):
 
     # 3. Store in ChromaDB
     vector_store_service.add_chunks(chunks, embeddings)
+
+    # 4. Record metrics
+    DOCS_INGESTED.inc()
+    CHUNKS_STORED.inc(len(chunks))
 
     logger.info(f"Successfully indexed '{file.filename}' → doc_id={doc_id}, chunks={len(chunks)}")
     return DocumentUploadResponse(

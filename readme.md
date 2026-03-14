@@ -197,7 +197,7 @@ Return answer + sources ← includes which chunks were used and similarity score
 - [x] **Week 1** ✅ — FastAPI skeleton, config, Ollama + Mistral 7B, document ingestion (PDF/TXT/DOCX), sentence-transformers embeddings, ChromaDB vector store, full RAG pipeline with sources
 - [x] **Week 2** ✅ — Multi-stage Dockerfile, full Docker Compose stack (FastAPI + ChromaDB + Ollama), .dockerignore, all services on shared internal network
 - [x] **Week 3** ✅ — AWS ECR + ECS Fargate deployment, IAM roles, security groups, CI/CD via GitHub Actions (auto build → push → deploy on every git push)
-- [ ] **Week 4** — Prometheus metrics, Grafana dashboards, polish & demo
+- [x] **Week 4** ✅ — Prometheus metrics (request rate, P95 latency, RAG latency, active requests), Grafana dashboards with live data, full observability stack
 
 ---
 
